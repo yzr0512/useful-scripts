@@ -1,6 +1,6 @@
 # 介绍
 
-Version: 0.1
+Version: 0.2
 
 这个仓库中存放的是一些基于python的脚本，配合上uTools(Win)、Alfred(macOS)等软件，可大大提高学习工作的效率。
 
@@ -17,6 +17,21 @@ Version: 0.1
 其余文件的用途：
 - `scriptConfiger.py` : 各脚本用于读取一些必要的配置，比如云剪贴板中用户的身份信息，存放在 `config.ini` 文件中
 - `tone_beep.wav` : 脚本完成时播放的声音
+
+## 依赖库
+
+各脚本用到的库不尽相同，这里将用到的所有库都列举出来。
+
+**Windows**
+```
+oss2==2.8.0
+```
+
+**macOS**
+```
+oss2==2.6.1
+pasteboard==0.2.0
+```
 
 ## 使用说明
 
