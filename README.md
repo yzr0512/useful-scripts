@@ -85,5 +85,18 @@ project_dir = syncClipboard
 
 ## 将剪贴板的图片上传到smms/阿里云图床
 
+```
+python uploadpic.py
+```
+
 ## 云剪贴板
 
+- 单参数调用时，功能是将云端内容下载到剪贴板。
+```
+python syncClipboard.py
+```
+
+- 双参数调用时，功能是将剪贴板内容上传到云端。第二参数的值无限制，随意填即可。
+```
+python syncClipboard.py upload
+```
