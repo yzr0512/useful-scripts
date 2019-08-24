@@ -1,0 +1,8 @@
+.vscode
+saved_pic
+log.txt
+.DS_Store
+test*
+__pycache__
+syncClipboard
+config.ini
