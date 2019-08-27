@@ -18,6 +18,6 @@ if __name__ == "__main__":
     elif s == 'Darwin':
         # macOS
         from subprocess import call
-        cmd = 'display notification \"%s\" with title \"%s\"' % (title, msg)
+        cmd = 'display notification \"%s\" with title \"%s\"' % (msg, title)
         call(["osascript", "-e", cmd])
         
