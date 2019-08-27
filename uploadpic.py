@@ -70,7 +70,7 @@ if __name__ == "__main__":
             import rmlb
             rmlb.remove_cb_line_break()
         
-        winsound.PlaySound('tone_beep.wav', winsound.SND_FILENAME) # 自定义铃声在电脑未播放音频的时候会出现听不见的现象
+        # winsound.PlaySound('tone_beep.wav', winsound.SND_FILENAME) # 自定义铃声在电脑未播放音频的时候会出现听不见的现象
         # os.system('C_v.ahk')
         exit()
 
@@ -120,14 +120,14 @@ if __name__ == "__main__":
             f_log.close()
         else:
             markdown_url = 'Upload failed! Status: ' + r.status
-        print(r.status)
+        print('status: %s' % r.status)
 
     # 剪贴板赋值，将url转换成markdown格式
     setClipboardText(markdown_url)
 
     # 通知用户上传完毕
     # winsound.PlaySound('SystemAsterisk', winsound.SND_ALIAS)
-    winsound.PlaySound('tone_beep.wav', winsound.SND_FILENAME) # 自定义铃声在电脑未播放音频的时候会出现听不见的现象
+    # winsound.PlaySound('tone_beep.wav', winsound.SND_FILENAME) # 自定义铃声在电脑未播放音频的时候会出现听不见的现象
 
     # 调用AutoHotkey来将剪贴板内容粘贴出来
     # os.system('C_v.ahk')

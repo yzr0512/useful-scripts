@@ -202,7 +202,7 @@ if __name__ == "__main__":
         configStr = downloadToMemory(configPath)
 
         objType, objName = readConfig(configStr)
-        print(objType, objName)
+        # print(objType, objName)
 
         # 根据图片和字符串分别处理
         if objType == 'png':
@@ -223,7 +223,7 @@ if __name__ == "__main__":
         
         print('Upload Func')
         objType = getClipboardDataType()
-        print(objType)
+        # print(objType)
 
         if objType == 'png':
             imgPath = saveClipboardImg()
