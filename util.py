@@ -2,9 +2,9 @@ import platform
 import sys
 
 # Data type
-TYPE_OTHER = 0
-TYPE_PNG = 1
-TYPE_STRING = 2
+TYPE_OTHER = 'other'
+TYPE_PNG = 'png'
+TYPE_STRING = 'string'
 
 # 'Windows' or 'macOS'
 OS_WINDOWS = 1
@@ -18,12 +18,20 @@ else:
     print('Your operating system is not supported.')
     exit(1)
 
+# 根据平台导入相应的库
 if OS_CUR == OS_WINDOWS:
     import win32clipboard as wcb
+elif OS_CUR == OS_MAC:
+    from AppKit import NSPasteboard, NSPasteboardTypePNG, NSPasteboardTypeTIFF, NSPasteboardTypeString
+    import pasteboard
 
 
 def getClipboardDataType():
-
+    """获取剪贴板数据的类型。支持的类型为`png` `string` `other`。
+    
+    Returns:
+        string -- 类型名称。
+    """
     if OS_CUR == OS_WINDOWS:
         if wcb.IsClipboardFormatAvailable(wcb.CF_BITMAP):
             return TYPE_PNG
@@ -31,13 +39,29 @@ def getClipboardDataType():
             return TYPE_STRING
         else:
             return TYPE_OTHER
+        
     elif OS_CUR == OS_MAC:
-        pass
+        pb = NSPasteboard.generalPasteboard()
+        data_type = pb.types()
+        if NSPasteboardTypePNG in data_type:
+            return TYPE_PNG
+        elif NSPasteboardTypeString in data_type:
+            return TYPE_STRING
+        else:
+            return TYPE_OTHER
 
-print(getClipboardDataType())
+# print(getClipboardDataType())
 
 
-def getClipboardData():
+def getClipboardData(projDir="."):
+    """获取剪贴板的内容。
+    
+    Keyword Arguments:
+        projectDir {str} -- 项目路径。当剪贴板数据是图片时，会将图片保存到此路径中。 (default: {"."})
+    
+    Returns:
+        string, string -- 第一返回值是剪贴板数据的类型。第二返回值是剪贴板的数据，若类型为图片则返回值为路径。
+    """
     t = getClipboardDataType()
     if OS_CUR == OS_WINDOWS:
         if t == TYPE_STRING:
@@ -64,16 +88,35 @@ def getClipboardData():
             # im.save('123.png', 'png')
         else:
             exit(2)
+        
     elif OS_CUR == OS_MAC:
-        pass
+        if t == TYPE_STRING:
+            pb = NSPasteboard.generalPasteboard()
+            data = pb.dataForType_(NSPasteboardTypeString)
+            data = str(data, 'utf-8')
+            
+        elif t == TYPE_PNG:
+            pb = NSPasteboard.generalPasteboard()
+            img = pb.dataForType_(NSPasteboardTypePNG)
+            data = '%s/%s' % (projDir, 'data.png')
+            img.writeToFile_atomically_(data, False)    # 将剪切板数据保存为文件
+
+        else:
+            exit(2)      
     
     return t, data
 
-getClipboardData()
-
+# t, data = getClipboardData()
+# print("t:", t)
+# print("data:", data)
 
 def setClipboardData(t, data):
-
+    """向剪贴板写入数据。
+    
+    Arguments:
+        t {string} -- 要写入数据的类型。
+        data {string} -- 要写入的数据。若类型为图片则此参数为图片的路径。
+    """
     if OS_CUR == OS_WINDOWS:
         if t == TYPE_PNG:
             # from PIL import Image
@@ -93,6 +136,34 @@ def setClipboardData(t, data):
             wcb.EmptyClipboard()
             wcb.SetClipboardText(data)
             wcb.CloseClipboard()
-        pass
+        else:
+            exit(2)
+        
     elif OS_CUR == OS_MAC:
-        pass
+        if t == TYPE_PNG:
+            f = open(data, 'rb')
+            img = f.read()
+            pb = pasteboard.Pasteboard()
+            res = pb.set_contents(img, pasteboard.PNG)
+            f.close()
+
+        elif t == TYPE_STRING:
+            pb = pasteboard.Pasteboard()
+            res = pb.set_contents(data)
+
+        else:
+            exit(2)
+
+
+
+
+def testFunc():
+    setClipboardData(TYPE_STRING, '这是测试文本。')
+    t, data = getClipboardData()
+    print("type:", t)
+    print("data:", data)
+
+    # setClipboardData(TYPE_PNG, 'syncClipboard/data.png')
+
+if __name__ == "__main__":
+    testFunc()
