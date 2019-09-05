@@ -1,14 +1,14 @@
 import sys
-import testsyncClipboard
-import notifier
+from syncClipboard import syncClipboard
+from notifier import notifier
 
 if __name__ == "__main__":
 	if len(sys.argv) != 2:
 		print("The number of parameters is invalid.")
 		exit()
 	if sys.argv[1] == '1':
-		testsyncClipboard.syncClipboard('upload')
-		notifier.notifier('云剪贴板', '上传完成。')
+		syncClipboard('upload')
+		notifier('云剪贴板', '上传完成。')
 	elif sys.argv[1] == '2':
-		testsyncClipboard.syncClipboard()
-		notifier.notifier('云剪贴板', '下载完成。')
+		syncClipboard()
+		notifier('云剪贴板', '下载完成。')
