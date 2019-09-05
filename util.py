@@ -84,8 +84,10 @@ def getClipboardData(projDir="."):
             # bmp.SaveBitmapFile(dc, '123.png')
             
             from PIL import ImageGrab
-            data = ImageGrab.grabclipboard()
-            # im.save('123.png', 'png')
+            img = ImageGrab.grabclipboard()
+            data = '%s/%s' % (projDir, 'data.png')
+            img.save(data, 'png')
+
         else:
             exit(2)
         
@@ -119,23 +121,23 @@ def setClipboardData(t, data):
     """
     if OS_CUR == OS_WINDOWS:
         if t == TYPE_PNG:
-            # from PIL import Image
-            # import win32con
-            # Image.open(data).save(data+'.bmp') # win的剪贴板仅支持bmp格式
-            # from ctypes import windll
-            # aString = windll.user32.LoadImageW(0, data+'.bmp', win32con.IMAGE_BITMAP, 0, 0, win32con.LR_LOADFROMFILE)
-            # # print(aString)
-            # if aString != 0: # 由于图片编码问题 图片载入失败的话 aString 就等于0 
-            #     wcb.OpenClipboard()
-            #     wcb.EmptyClipboard()
-            #     wcb.SetClipboardData(win32con.CF_BITMAP, aString)
-            #     wcb.CloseClipboard()
-            pass
+            from PIL import Image
+            Image.open(data).save(data+'.bmp') # win的剪贴板仅支持bmp格式
+            from ctypes import windll
+            aString = windll.user32.LoadImageW(0, data+'.bmp', win32con.IMAGE_BITMAP, 0, 0, win32con.LR_LOADFROMFILE)
+            # print(aString)
+            if aString != 0: # 由于图片编码问题 图片载入失败的话 aString 就等于0 
+                wcb.OpenClipboard()
+                wcb.EmptyClipboard()
+                wcb.SetClipboardData(win32con.CF_BITMAP, aString)
+                wcb.CloseClipboard()
+            
         elif t == TYPE_STRING:
             wcb.OpenClipboard()
             wcb.EmptyClipboard()
             wcb.SetClipboardText(data)
             wcb.CloseClipboard()
+
         else:
             exit(2)
         
@@ -144,12 +146,12 @@ def setClipboardData(t, data):
             f = open(data, 'rb')
             img = f.read()
             pb = pasteboard.Pasteboard()
-            res = pb.set_contents(img, pasteboard.PNG)
+            pb.set_contents(img, pasteboard.PNG)
             f.close()
 
         elif t == TYPE_STRING:
             pb = pasteboard.Pasteboard()
-            res = pb.set_contents(data)
+            pb.set_contents(data)
 
         else:
             exit(2)
