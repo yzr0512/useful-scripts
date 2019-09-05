@@ -70,6 +70,7 @@ def getClipboardData(projDir="."):
             wcb.CloseClipboard()
             # print(data)
             data = str(data, 'gbk')
+            data = data.replace('\r', '')
         elif t == TYPE_PNG:
             # import win32ui
                        
