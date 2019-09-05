@@ -122,6 +122,7 @@ def setClipboardData(t, data):
     """
     if OS_CUR == OS_WINDOWS:
         if t == TYPE_PNG:
+            import win32con
             from PIL import Image
             Image.open(data).save(data+'.bmp') # win的剪贴板仅支持bmp格式
             from ctypes import windll
