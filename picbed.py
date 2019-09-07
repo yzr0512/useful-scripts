@@ -5,7 +5,7 @@ import time
 import util
 
 from scriptConfiger import ScriptConfiger
-def getConfig(name='uploadpic'):
+def getConfig(name='picbed'):
     sc = ScriptConfiger(section=name)
     if not sc.isSectionExists():
         sc.setKeyValue('pic_bed', 'aliyun') # smms, aliyun
