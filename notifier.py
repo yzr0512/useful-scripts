@@ -1,14 +1,7 @@
 import platform
 import sys
-if __name__ == "__main__":
-    print(sys.argv)
-    if len(sys.argv) >= 3:
-        title = sys.argv[1]
-        msg = sys.argv[2]
-    else:
-        title = 'Title'
-        msg = 'Notification demo'
 
+def notifier(title, msg):
     s = platform.system()
     if s == 'Windows':
         # Windows
@@ -20,4 +13,15 @@ if __name__ == "__main__":
         from subprocess import call
         cmd = 'display notification \"%s\" with title \"%s\"' % (msg, title)
         call(["osascript", "-e", cmd])
-        
+
+
+if __name__ == "__main__":
+    # print(sys.argv)
+    if len(sys.argv) >= 3:
+        title = sys.argv[1]
+        msg = sys.argv[2]
+    else:
+        title = 'Title'
+        msg = 'Notification demo'
+
+    notifier(title, msg)
