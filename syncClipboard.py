@@ -159,7 +159,7 @@ def syncClipboard(func='download'):
 
         elif t == util.TYPE_STRING:
             path = '%s/%s' % (projectDir, 'data.txt')
-            f = open(path, 'w') # 以写模式打开文件，已有内容会被删除
+            f = open(path, 'w', encoding='utf-8') # 以写模式打开文件，已有内容会被删除
             f.write(data)
             f.close()
 
