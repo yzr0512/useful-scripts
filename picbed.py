@@ -70,14 +70,14 @@ def upload_smms(pic_name, proj_dir='picbed', log_path='picbed/log.txt'):
     return markdown_url
 
 
-def upload_aliyun(pic_name, proj_dir='picbed', log_path='picbed/log.txt'):
+def upload_aliyun(pic_path, remote_path, log_path='picbed/log.txt'):
     """上传到阿里云图床。
     
     Arguments:
-        pic_name {str} -- 图片文件名称，不包括路径。
+        pic_name {str} -- 图片文件路径。
+        remote_path {str} -- 远端的文件路径。
     
     Keyword Arguments:
-        proj_dir {str} -- 图片文件夹 (default: {'picbed'})
         log_path {str} -- 日志文件的路径，包括文件名 (default: {'picbed/log.txt'})
     
     Returns:
@@ -90,16 +90,18 @@ def upload_aliyun(pic_name, proj_dir='picbed', log_path='picbed/log.txt'):
     auth = oss2.Auth(conf.getValue('key_id'), conf.getValue('key_secret'))
     bucket = oss2.Bucket(auth, endpoint, bucket_name)
 
-    tm = time.localtime()
-    objectName = time.strftime("%Y/%m/", tm) + pic_name
-    r = bucket.put_object_from_file(objectName, os.path.join(proj_dir, pic_name))
+    
+    # objectName = time.strftime("%Y/%m/", tm) + pic_name
+    r = bucket.put_object_from_file(remote_path, pic_path)
     if r.status == 200:
+        # tm = time.localtime()
         markdown_url = '![ali](https://%s.%s/%s)'\
-                % (bucket_name, endpoint.replace('https://', ''), objectName)
+                % (bucket_name, endpoint.replace('https://', ''), remote_path)
         # markdown_url = '<img alt="ali" width=80%% src="https://%s.%s/%s" style="display:block; margin:0 auto;">'\
         #         % (bucket_name, endpoint.replace('https://', ''), objectName)
         f_log = open(log_path, 'a')
-        f_log.write('%s: %s\n' % (time.strftime('%Y-%m-%d %H:%M:%S ', tm), pic_name))
+        # f_log.write('%s: %s\n' % (time.strftime('%Y-%m-%d %H:%M:%S ', tm), pic_path))
+        f_log.write('%s: %s\n' % (r.headers['Date'], pic_path))
         f_log.write('markdown url: %s\n' % markdown_url)
         f_log.write('----------------------------------\n')
         f_log.close()
@@ -116,10 +118,19 @@ def picbed():
     
     # 用当前时间给图片命名
     tm = time.localtime()
-    pic_name = time.strftime("%Y-%m-%d-%H%M%S", tm)+'.png'
-    pic_path = os.path.join(pic_save_dir, pic_name)
+    sub_dir = time.strftime("%Y/%m", tm)
+    if not os.path.exists(os.path.join(pic_save_dir, sub_dir)):
+        # mkdir 不能一次创建两级目录
+        year = time.strftime("%Y", tm)
+        if not os.path.exists(os.path.join(pic_save_dir, year)):
+            os.mkdir(os.path.join(pic_save_dir, year))
+        os.mkdir(os.path.join(pic_save_dir, sub_dir))
 
-    _, path = util.getClipboardData(projDir=pic_save_dir)
+    pic_dir = os.path.join(pic_save_dir, sub_dir)
+    pic_name = time.strftime("%Y-%m-%d-%H%M%S", tm)+'.png'
+    pic_path = os.path.join(pic_save_dir, sub_dir, pic_name)
+
+    _, path = util.getClipboardData(projDir=pic_dir)
     if not os.path.exists(path):
         print('Error: Image is not existed.')
         exit(2)
@@ -128,7 +139,8 @@ def picbed():
     if pic_bed == 'smms':
         s = upload_smms(pic_name, pic_save_dir, log_path)
     elif pic_bed == 'aliyun':
-        s = upload_aliyun(pic_name, pic_save_dir, log_path)
+        remote_path = time.strftime("%Y/%m/", tm) + pic_name
+        s = upload_aliyun(pic_path, remote_path, log_path)
     else:
         s = 'Error: the picture bed which you choosed is not supported.'
     util.setClipboardData(util.TYPE_STRING, s)
